@@ -1,8 +1,8 @@
 {
   "compilerOptions": {
     "target": "ES2022",
-    "module": "NodeNext",
-    "moduleResolution": "NodeNext",
+    "module": "commonjs",
+    "moduleResolution": "node",
     "lib": ["DOM", "ES2022"],
     "esModuleInterop": true,
     "resolveJsonModule": true,
@@ -17,6 +17,6 @@
     },
     "types": ["node", "@cucumber/cucumber", "@playwright/test"]
   },
-  "include": ["src/**/*", "features/**/*", "cucumber.js"],
+  "include": ["src/**/*", "features/**/*", "cucumber.js",],
   "exclude": ["node_modules", "dist"]
-}
+} 
