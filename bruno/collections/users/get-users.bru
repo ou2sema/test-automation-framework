@@ -1,0 +1,77 @@
+meta {
+  name: Get Users
+  type: http
+  seq: 1
+}
+
+get {
+  url: {{base_url}}/users
+  query: {
+    page: 1,
+    limit: 10
+  }
+  body: none
+  auth: bearer
+}
+
+headers {
+  Accept: application/json
+}
+
+auth:bearer {
+  token: {{auth_token}}
+}
+
+script:post-response {
+  assert(res.status === 200, "Expected status 200");
+  assert(res.body.items, "Response should contain items array");
+  assert(res.body.total, "Response should contain total count");
+  assert(res.body.page, "Response should contain page number");
+  assert(res.body.limit, "Response should contain limit value");
+}
+
+tests {
+  test("Get users with pagination") {
+    // Set pagination params
+    req.setQueryParams({
+      page: 1,
+      limit: 5
+    });
+    
+    // Send request
+    const response = req.send();
+    
+    // Assertions
+    expect(response.status).to.equal(200);
+    expect(response.body.items).to.be.an('array');
+    expect(response.body.page).to.equal(1);
+    expect(response.body.limit).to.equal(5);
+  }
+  
+  test("User list is properly paginated") {
+    // First page
+    req.setQueryParams({
+      page: 1,
+      limit: 2
+    });
+    const response1 = req.send();
+    
+    // Second page
+    req.setQueryParams({
+      page: 2, 
+      limit: 2
+    });
+    const response2 = req.send();
+    
+    // Assertions
+    expect(response1.status).to.equal(200);
+    expect(response2.status).to.equal(200);
+    expect(response1.body.items).to.have.lengthOf(2);
+    expect(response2.body.items).to.have.lengthOf(2);
+    
+    // Items should be different between pages
+    if (response1.body.items.length > 0 && response2.body.items.length > 0) {
+      expect(response1.body.items[0].id).to.not.equal(response2.body.items[0].id);
+    }
+  }
+}

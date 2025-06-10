@@ -1,0 +1,86 @@
+meta {
+  name: Login
+  type: http
+  seq: 1
+}
+
+post {
+  url: {{base_url}}/auth/login
+  body: json
+  auth: none
+}
+
+headers {
+  Content-Type: application/json
+  Accept: application/json
+}
+
+body:json {
+  {
+    "username": "{{username}}",
+    "password": "{{password}}"
+  }
+}
+
+vars:pre-request {
+  // You can set variables before the request is sent
+  // Access them with {{variableName}} syntax
+}
+
+script:pre-request {
+  // You can modify the request before it's sent
+  // For example, add custom headers or modify the body
+}
+
+script:post-response {
+  // Process the response
+  // Save auth token for future requests
+  if (res.status === 200) {
+    bru.setEnvVar("auth_token", res.body.token);
+    console.log("Auth token saved for future requests");
+  }
+  
+  // Assert on expected response
+  assert(res.status === 200 || res.status === 401, 
+    `Expected status 200 or 401, got ${res.status}`);
+    
+  if (res.status === 200) {
+    assert(res.body.token, "Response should contain auth token");
+    assert(res.body.user, "Response should contain user information");
+  } else {
+    assert(res.body.message, "Error response should contain message");
+  }
+}
+
+tests {
+  test("Successful login returns 200 and token") {
+    // Set test specific variables
+    req.setBodyJson({
+      username: bru.getEnvVar("valid_username"),
+      password: bru.getEnvVar("valid_password")
+    });
+    
+    // Send request
+    const response = req.send();
+    
+    // Assertions
+    expect(response.status).to.equal(200);
+    expect(response.body.token).to.exist;
+    expect(response.body.user).to.exist;
+  }
+  
+  test("Invalid credentials return 401") {
+    // Set test specific variables
+    req.setBodyJson({
+      username: "invalid@example.com",
+      password: "wrongpassword"
+    });
+    
+    // Send request
+    const response = req.send();
+    
+    // Assertions
+    expect(response.status).to.equal(401);
+    expect(response.body.message).to.exist;
+  }
+}

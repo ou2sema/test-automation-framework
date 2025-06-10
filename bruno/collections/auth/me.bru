@@ -1,0 +1,68 @@
+meta {
+  name: Get Current User
+  type: http
+  seq: 2
+}
+
+get {
+  url: {{base_url}}/auth/me
+  body: none
+  auth: bearer
+}
+
+headers {
+  Accept: application/json
+}
+
+auth:bearer {
+  token: {{auth_token}}
+}
+
+script:pre-request {
+  // Check if we have an auth token
+  if (!bru.getEnvVar("auth_token")) {
+    console.log("No auth token found, skipping request");
+    req.cancel();
+  }
+}
+
+script:post-response {
+  assert(res.status === 200, "Expected status 200");
+  assert(res.body.id, "Response should contain user id");
+  assert(res.body.username, "Response should contain username");
+}
+
+tests {
+  test("Successful retrieval of current user") {
+    // Ensure we have an auth token
+    if (!bru.getEnvVar("auth_token")) {
+      console.log("No auth token found, running login first");
+      // Run login and grab token
+      const loginReq = bru.getRequest("Login");
+      loginReq.setBodyJson({
+        username: bru.getEnvVar("valid_username"),
+        password: bru.getEnvVar("valid_password")
+      });
+      const loginRes = loginReq.send();
+      bru.setEnvVar("auth_token", loginRes.body.token);
+    }
+    
+    // Send request with token
+    req.setAuth("bearer", { token: bru.getEnvVar("auth_token") });
+    const response = req.send();
+    
+    // Assertions
+    expect(response.status).to.equal(200);
+    expect(response.body.id).to.exist;
+    expect(response.body.username).to.exist;
+  }
+  
+  test("Unauthorized request returns 401") {
+    // Send request with invalid token
+    req.setAuth("bearer", { token: "invalid-token" });
+    const response = req.send();
+    
+    // Assertions
+    expect(response.status).to.equal(401);
+  }
+}

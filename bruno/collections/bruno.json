@@ -1,0 +1,22 @@
+{
+  "version": "1",
+  "name": "Test API Collection",
+  "description": "API testing collection for the automation framework",
+  "variables": {
+    "dev": {
+      "base_url": "https://dev-api.example.com",
+      "valid_username": "user@example.com",
+      "valid_password": "user123"
+    },
+    "staging": {
+      "base_url": "https://staging-api.example.com",
+      "valid_username": "user@example.com",
+      "valid_password": "user123"
+    },
+    "production": {
+      "base_url": "https://api.example.com",
+      "valid_username": "",
+      "valid_password": ""
+    }
+  }
+}
