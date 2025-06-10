@@ -4,8 +4,13 @@ const common = {
   requireModule: ['ts-node/register'],
   format: [
     'progress-bar',
-    'json:reports/cucumber-report.json'
+    'json:reports/cucumber-report.json',
+    "node_modules/allure-cucumberjs" // add this for Allure
   ],
+
+  publishQuiet: true,
+    paths: ["features/**/*.feature"],
+    parallel: 1,
   formatOptions: { snippetInterface: 'async-await' },
   worldParameters: {
     browserType: process.env.BROWSER || 'chromium',

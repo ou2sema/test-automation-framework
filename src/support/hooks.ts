@@ -9,6 +9,7 @@ const logger = new Logger('Hooks');
 const scenarioStatuses: any[] = [];
 // Setup test directories and clean old files
 BeforeAll(async function () {
+  await fs.ensureDir('allure-results');
   logger.info('Setting up test directories and cleaning previous files');
 
   const reportDirs = ['screenshots', 'videos', 'logs','pdf'];
@@ -44,7 +45,6 @@ const duration = Date.now() - this.scenarioStartTime!;
   if (this.page) {
     if (result?.status === Status.FAILED) {
       this.logger.error(`Scenario failed: ${pickle.name}`);
-
       const screenshot = await this.page.screenshot({
         path: `reports/screenshots/${scenarioName}_failed.png`,
         fullPage: true,

@@ -12,7 +12,10 @@
     "lint": "eslint . --ext .ts",
     "bruno:run": "bruno run ./bruno/collections --env dev",
     "generate-report": "ts-node src/report/generate-reports.ts",
-    "bruno:export": "bruno export ./bruno/collections ./src/services/bruno-exports"
+    "bruno:export": "bruno export ./bruno/collections ./src/services/bruno-exports",
+     "allure:generate": "allure generate allure-results --clean -o allure-report",
+  "allure:open": "allure open allure-report",
+  "allure:deploy": "npm run allure:generate && gh-pages -d allure-report"
   },
   "dependencies": {
     "@cucumber/cucumber": "^10.3.1",
@@ -28,7 +31,7 @@
     "pdfkit": "^0.17.1",
     "react": "^18.3.1",
     "react-dom": "^18.3.1",
-    "winston": "^3.11.0" 
+    "winston": "^3.11.0"
   },
   "devDependencies": {
     "@eslint/js": "^9.9.1",
@@ -40,6 +43,7 @@
     "@types/react": "^18.3.5",
     "@types/react-dom": "^18.3.0",
     "@vitejs/plugin-react": "^4.3.1",
+    "allure-cucumberjs": "^3.2.2",
     "autoprefixer": "^10.4.18",
     "eslint": "^9.9.1",
     "eslint-plugin-react-hooks": "^5.1.0-rc.0",
