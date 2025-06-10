@@ -1,0 +1,8 @@
+node_modules/
+dist/
+reports/
+.env
+.vscode/
+*.log
+*.pdf
+*.mp4
