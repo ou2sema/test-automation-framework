@@ -69,6 +69,10 @@ scenarioStatuses.push({
 // After all tests
 AfterAll(async function () {
   logger.info('All tests completed');
+   if (scenarioStatuses.length === 0) {
+    logger.info('No scenarios executed - skipping PDF report');
+    return;
+  }
    try {
     await generatePdfReport((global as any).worldInstance, scenarioStatuses);
   } catch (e) {
