@@ -17,13 +17,16 @@ module.exports = {
   default: common,
   ci: {
     ...common,
-    format: [
-      'progress',
-      'json:reports/cucumber-report.json',
-      ['allure-cucumberjs', {
-        resultsDir: './allure-results'
-      }]
-    ],
+    format: ['allure-cucumberjs/reporter'],
+    formatOptions: {
+      resultsDir: 'reports/allure-results',
+      environmentInfo: {
+        os_platform: require('os').platform(),
+        os_version: require('os').release(),
+        node_version: process.version
+      }
+      },
+      require: ['src/support/hooks.ts', 'src/step-definitions/**/*.ts'],
     parallel: 2
   }
 }; 

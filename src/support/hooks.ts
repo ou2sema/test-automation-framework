@@ -4,9 +4,11 @@ import fs from 'fs-extra';
 import path from 'path';
 import { Logger } from '../utils/logger';
 import { generatePdfReport } from '../reporters/pdf-report-generator';
-
+ import * as allure from "allure-js-commons";
 const logger = new Logger('Hooks');
 const scenarioStatuses: any[] = [];
+
+
 // Setup test directories and clean old files
 BeforeAll(async function () {
 
@@ -33,6 +35,11 @@ BeforeAll(async function () {
 Before(async function (this: CustomWorld, { pickle }) {
   this.scenarioStartTime = Date.now();
   this.logger.info(`Starting scenario: ${pickle.name}`);
+   allure.epic('Login Flow');
+  allure.feature(pickle.uri);
+  allure.story(pickle.name);
+   // Allure: Start new test
+
 });
 
 // After each scenario
@@ -48,10 +55,12 @@ const duration = Date.now() - this.scenarioStartTime!;
   if (this.page) {
     if (result?.status === Status.FAILED) {
       this.logger.error(`Scenario failed: ${pickle.name}`);
-
+       const buffer = await this.page.screenshot();
+    allure.attachment('Screenshot on Failure', buffer, 'image/png');
       const screenshot = await this.page.screenshot({
         path: `reports/screenshots/${scenarioName}_failed.png`,
         fullPage: true,
+        
       });
 
       this.attach(screenshot, 'image/png');
