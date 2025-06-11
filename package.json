@@ -4,7 +4,7 @@
   "version": "1.0.0",
   "type": "commonjs",
   "scripts": {
-    "test": "cross-env ALLURE_CONFIG=allure.config.js cucumber-js --format allure-cucumberjs",
+    "test": "cucumber-js --require-module ts-node/register --require 'features/**/*.ts'",
     "allure:generate": "allure generate ./allure-results --clean -o ./allure-report",
     "allure:deploy": "npm run allure:generate && gh-pages -d allure-report",
     "test:parallel": "cucumber-js --parallel 3",

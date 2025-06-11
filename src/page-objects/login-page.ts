@@ -12,7 +12,7 @@ export class LoginPage extends BasePage {
   };
 
   constructor(world: CustomWorld) {
-    super(world, '/login');
+    super(world, 'login');
   }
 protected async getPage(): Promise<Page> {
     return this.world.getPage();
